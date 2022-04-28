@@ -1393,7 +1393,7 @@ boss_kraid:
     %cm_toggle_bit("Kraid", #$7ED828, #$0100, #0)
 
 boss_phantoon:
-    %cm_toggle_bit("Phantoon", #$7ED82A, #$0100, #0)
+    %cm_toggle_bit("Phantoooooooooooooooon", #$7ED82A, #$0100, #0)
 
 boss_botwoon:
     %cm_toggle_bit("Botwoon", #$7ED82C, #$0002, #0)
