@@ -142,6 +142,7 @@ gamemode_shortcuts:
     ; No shortcuts matched, CLC so we won't skip normal gameplay
   + CLC : RTS
 
+if !FEATURE_SD2SNES
   .save_state
 ; This if statement is to prevent an assembler error from an unknown method. The one on the call to this
 ; prevents the button combo from being intercepted by the non-sd2snes rom
@@ -153,7 +154,7 @@ if !FEATURE_TINYSTATES
     CMP #$001C : BPL .fail
 
   .save
-elseif !FEATURE_SD2SNES
+endif
     JSL save_state
     ; SEC to skip normal gameplay for one frame after saving state
     SEC : RTS
