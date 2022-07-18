@@ -10,9 +10,124 @@ org $8BB240
 endif
     JSR cutscenes_load_ceres_arrival
 
+if !FEATURE_PAL
+org $8B92B5
+else
+org $8B930C
+endif
+    JSL cutscenes_nintendo_splash
+    NOP : NOP
+
+org $80FF00
+print pc, " cutscenes bank80 start"
+cutscenes_door_transition:
+{
+    LDA !sram_fast_doors : BEQ .slow
+    ; If fast doors are enabled, run the door transition twice per frame.
+    PHX
+    JSR ($AE76,x)
+    PLX
+    BCC .slow
+    RTS             ; If the door transition is done, don't run it again.
+  .slow
+    JMP ($AE76,x)
+}
+warnpc $80FFB0  ; header
+print pc, " cutscenes bank80 end"
+
+org $80AE5C
+    JSR cutscenes_door_transition
+
+if !FEATURE_PAL
+org $A39597
+    JSL cutscenes_add_elevator_speed
+    BRA $0D
+org $A395B2
+    JSL cutscenes_sub_elevator_speed
+    BRA $0D
+org $A395D4
+    JSL cutscenes_add_elevator_speed
+    BRA $0D
+org $A395EE
+    JSL cutscenes_sub_elevator_speed
+    BRA $0D
+org $82E18E
+    JSL cutscenes_set_elevator_delay
+    NOP : NOP
+else
+org $A39587
+    JSL cutscenes_add_elevator_speed
+    BRA $0D
+org $A395A2
+    JSL cutscenes_sub_elevator_speed
+    BRA $0D
+org $A395C4
+    JSL cutscenes_add_elevator_speed
+    BRA $0D
+org $A395DE
+    JSL cutscenes_sub_elevator_speed
+    BRA $0D
+org $82E18E
+    JSL cutscenes_set_elevator_delay
+    NOP : NOP
+endif
 
 org $8BF800
 print pc, " cutscenes start"
+
+cutscenes_nintendo_splash:
+{
+    LDX #$0078
+    LDA !sram_cutscenes
+    AND !CUTSCENE_SKIP_SPLASH
+    BEQ .done
+    LDX #$0001
+  .done
+    STX $0DE2
+    RTL
+}
+
+cutscenes_add_elevator_speed:
+{
+    CLC
+    LDA !sram_fast_doors : BEQ .slow
+    LDA $0F80,x : ADC #$8000 : STA $0F80,x
+    LDA $0F7E,x : ADC #$0004 : STA $0F7E,x
+    RTL
+  .slow
+    LDA $0F80,x : ADC #$8000 : STA $0F80,x
+    LDA $0F7E,x : ADC #$0001 : STA $0F7E,x
+    RTL
+}
+cutscenes_sub_elevator_speed:
+{
+    SEC
+    LDA !sram_fast_doors : BEQ .slow
+    LDA $0F80,x : SBC #$8000 : STA $0F80,x
+    LDA $0F7E,x : SBC #$0004 : STA $0F7E,x
+    RTL
+  .slow
+    LDA $0F80,x : SBC #$8000 : STA $0F80,x
+    LDA $0F7E,x : SBC #$0001 : STA $0F7E,x
+    RTL
+}
+cutscenes_set_elevator_delay:
+{
+    ; We tripled the elevator speed, so decrease the room transition delay accordingly
+if !FEATURE_PAL
+    LDX #$0028
+    LDA !sram_fast_doors : BEQ .slow
+    LDX #$000D
+else
+    LDX #$0030
+    LDA !sram_fast_doors : BEQ .slow
+    LDX #$0010
+endif
+  .slow
+    STX $092F
+    RTL
+}
+
 
 cutscenes_load_intro:
 {

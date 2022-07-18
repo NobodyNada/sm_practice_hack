@@ -1,14 +1,15 @@
 # HUD Modifications
 ![HUD Image](/smhud.png)
 
-1. Status display defaults to first enemy's HP, but can be configured to show Charge Timer, X-Factor timer, Shinespark timer and more (see InfoHUD Modes)
-2. Item collection percentage
-3. Number of E-tanks
-4. Current total energy (excluding reserves), sometimes overridden by status display contents.
-5. Segment timer in minutes.seconds.frames. Resets when starting a new game, loading a preset, or by controller shortcut.
-6. Timer in seconds.frames, resets when entering a new room and updates on item acquisition and room transitions. Can be set to realtime or gametime.
-7. Lag frames, updates same as above
-8. Frames spent by last door transition
+1. Input display shows which buttons where held on the previous frame.
+2. Status display defaults to first enemy's HP, but can be configured to show Charge Timer, X-Factor timer, Shinespark timer and more (see InfoHUD Modes).
+3. Current total energy (excluding reserves), sometimes overridden by status display contents.
+4. Status icon display can be enabled to show when you have a shinespark stored, health bomb flag, and more.
+5. Segment timer in minutes.seconds.frames. Resets when starting a new game, loading a preset, or by controller/menu shortcut.
+6. Room timer in seconds.frames, resets when entering a new room and updates on item acquisition and room transitions. Can be set to realtime or gametime.
+7. Lag frames, updates same as above.
+8. Frames spent by last door transition.
+9. Item collection percentage, which can be configured to show reserve energy instead.
 
 
 # Controller Shortcuts
@@ -26,7 +27,18 @@
 | Down                      | Decreases game speed
 | Right                     | Frame advance
 | Left                      | Restore game speed
-  
+
+
+# Built-In Savestate Feature
+
+The savestate feature allows you to save and instantly reload at nearly any part of gameplay. This is achieved by transferring all of the console's working memory and video memory into the battery backed storage on the cartridge, also known as SRAM. It requires a very large amount of SRAM to store all of that data. Much more than commercial games offered (or needed), even though it was possible at the time. As a result, many platforms (including official Virtual Console releases) do not allow saving more than 64K or 128K of SRAM, while 256K is needed for full savestate support. Platforms known to support 256K include FXPAK (formerly known as SD2SNES), bsnes and Mesen-S emulators, and the Super NT when equipped with the "jailbreak" firmware.
+&nbsp;  
+
+A separate version of the practice hack is offered with a modified version of savestates. It offers the same features of normal savestates, but uses some of the game's own loading routines to reduce the amount of data that needs to be stored. This brings the SRAM requirements down to 128K. The trade-off is that the saved state takes slightly longer to restore. Most modern PC emulators will work with this version. The older Everdrive flash carts are assumed to support this version.
+&nbsp;  
+
+If you experience crashes or severe glitches when using savestates, your platform may not be supported. It's recommended that you use a version of the practice hack without the built-in savestate feature. You can still use any savestate functionality offered by your platform.
+
 
 # Menu Features
 
@@ -112,8 +124,9 @@
 | **Sprite Features**           | Features that draw sprites over normal gameplay. Beware of CPU performance impact
 | - Samus on Top                | Draw Samus on top of foreground objects/tiles
 | - Show Samus Hitbox           | Toggles an overlay of Samus hitbox that's drawn on top of Samus sprite.
-| - Show Enemy Hitboxes         | Toggles an overlay of enemy hitboxes that are drawn on top of enemy sprite. Some enemies, especially bosses, use the extended spritemap format or are not compatible at this time
-| - Phan + Dray Hitboxes        | Toggles an overlay of enemy hitboxes for enemies that use the extended spritemap format, such as Phantoon, Draygon, and Space Pirates.
+| - Normal Enemy Hitboxes       | Toggles an overlay of enemy hitboxes that are drawn on top of enemy sprite. Some enemies, especially bosses, use the extended spritemap format. Use the Large Enemy Hitboxes option instead.
+| - Large Enemy Hitboxes        | Toggles an overlay of enemy hitboxes for the following enemies that use the extended spritemap format: Mother Brain, Ridley, Draygon, Torizos, Spore Spawn, Crocomire, Ceres steam, Oums, and Space Pirates. Kraid would be in this list, but it is unsupported due to too many sprites being drawn.
+| - Special Boss Hitboxes       | Toggles an overlay of Mother Brain's special hitboxes or Ridley's tail hitbox.
 | - Samus Projectile Hitbox     | Toggles an overlay of Samus projectile hitboxes that are drawn on top of Samus projectile sprites.
 | - Enemy Projectile Hitbox     | Toggles an overlay of enemy projectile hitboxes that are drawn on top of enemy projectile sprites.
 | - OOB Tile Viewer             | This enables an overlay that shows the tiles near Samus at all times, disconnected from the camera. This allows you to navigate OOB (Out of Bounds) areas where neither Samus nor the actual tiles are visible in-game. Samus hitbox is drawn at the center of the overlay to show the position relative to the tiles.
