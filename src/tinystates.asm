@@ -32,6 +32,10 @@ pre_load_state:
     STA $4200
     REP #$30
 
+    ; Save the old room ID
+    LDA !ROOM_ID
+    PHA
+
     ; Restore parts of LoRAM so we can load in the proper graphics etc
     ; This doesn't overwrite the stack.
     LDA #$8000
@@ -51,9 +55,15 @@ pre_load_state:
     ; before restoring the rest of the state from SRAM
     JSL preset_load_destination_state_and_tiles
     JSL preset_load_library_background
-    JSL tinystates_load_level_tile_tables_scrolls_plms_and_execute_asm
-    JSL tinystates_preload_bg_data
 
+    ; If we're in the same room, we don't need to reload the level
+    PLA
+    CMP !ROOM_ID
+    BEQ .skip_load_level
+    JSL tinystates_load_level
+
+  .skip_load_level:
+    JSL tinystates_preload_bg_data
     RTS
 }
 
@@ -454,29 +464,52 @@ tinystates_preload_bg_data:
   JSR $82E2 ; Re-load BG3 tiles
   RTL
 
-tinystates_mirror_bg_data:
-  PHB        
-  PEA $7F00  
-  PLB        
-  PLB        
-  LDA $0000  
-  TAX        
-  LSR A      
-  ADC $0000  
-  ADC $0000  
-  TAY        
-  BRA +
--             
-  LDA $0002,y
-  STA $9602,x
-+             
-  DEY        
-  DEY        
-  DEX        
-  DEX        
-  BPL -
-  PLB
-  RTL
+tinystates_load_level: {
+    ; If the room is small enough that the entire level fits within the BG1 buffer,
+    ; we don't need to decompress the whole level since we can restore BG2 from 
+    ; the unused space within the BG1 buffer.
+    LDA $715500     ; SRAM copy of $7F0000
+    CMP #$2733      ; max level size to fit within BG1 ($2733 * 5/2 = $61FF)
+    BCC .skip_decompress
+
+    JSL preset_load_level_tile_tables_scrolls_plms_and_execute_asm
+    RTL
+
+  .skip_decompress
+    JSL tinystates_load_level_tile_tables_scrolls_plms_and_execute_asm
+    RTL
+}
+
+tinystates_mirror_bg_data: {
+    ; If the room is small enough that the entire level fits within the BG1 buffer,
+    ; copy BG2 from the BG1 buffer.
+    PHB
+    PEA $7F00
+    PLB
+    PLB
+    LDA $0000
+    CMP #$2733      ; max level size to fit within BG1 ($2733 * 5/2 = $61FF)
+    BCS .done
+    TAX
+    LSR A
+    ADC $0000
+    ADC $0000
+    TAY
+    BRA +
+  -
+    LDA $0002,y
+    STA $9602,x
+  +
+    DEY
+    DEY
+    DEX
+    DEX
+    BPL -
+
+  .done
+    PLB
+    RTL
+}
 
 tinystates_load_kraid:
 {
