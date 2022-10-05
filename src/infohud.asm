@@ -1469,6 +1469,14 @@ infidoppler_hook_fire_missile:
 {
     LDA !ram_infidoppler_enabled
     BEQ .decrement_missiles
+
+    LDA !IH_CONTROLLER_PRI : AND #$0030 : CMP #$0030 ; (L+R)
+    BNE .enabled
+
+    ; turn it off
+    LDA #$0000
+    STA !ram_infidoppler_enabled
+    BRA .done
     
 .enabled:
     LDX $14     ; projectile index
