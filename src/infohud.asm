@@ -282,10 +282,38 @@ ih_debug_routine:
 
 ih_nmi_end:
 {
+    LDA !REALTIME_LAG_COUNTER
+    CMP #$0029
+    BNE .nocrash
+
+    !NMITIMEN = $4200
+    !HTIME = $4207
+    !VTIME = $4209
+    !TIMEUP = $4211
+    LDA #$0000
+    STA !HTIME
+    LDA.w #229
+    STA !VTIME
+    LDA !TIMEUP
+    LDA #$FFFF
+    STA !NMITIMEN
+
+    LDA $0A, S
+    AND #$FFFB
+    STA $0A, S
+    LDA $11, S
+    AND #$FFFB
+    STA $11, S
+    LDA $14, S
+    AND #$FFFB
+    STA $14, S
+
+.nocrash
 if !FEATURE_VANILLAHUD
 else
     ; Room timer
-    LDA !ram_realtime_room : INC : STA !ram_realtime_room
+    ;LDA !ram_realtime_room : INC : STA !ram_realtime_room
+    NOP
 
     ; Segment real timer
     LDA !ram_seg_rt_frames : INC : STA !ram_seg_rt_frames : CMP !FRAMERATE : BNE .doneTimer

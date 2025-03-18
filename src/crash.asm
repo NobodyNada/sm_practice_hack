@@ -22,6 +22,10 @@ org $80FFE6
 NativeBRKHandlerHook:
     dw BRKHandler
 
+org $80FFEE
+NativeIRQHandlerHook:
+    dw BRKHandler
+
 ; Hijack emulation COP vector
 org $80FFF4
 EmulationCOPHandlerHook:
